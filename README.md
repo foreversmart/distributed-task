@@ -52,6 +52,13 @@ distributed-task
   	![image](http://mytutu.qiniudn.com/go-task.jpg)
   
   
+  ----
+ join the team
+ ===
+ ----
+ 	给njutree dot at gmail dot com 发一封邮件加入我们的项目
+ 	Please send me a mail at njutree dot whitworth at gmail dot com.
+  
   
 
 
