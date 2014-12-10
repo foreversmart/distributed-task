@@ -8,8 +8,25 @@
 package scheduler
 
 import (
-
+	"distributed-task/gocommand"
 )
+
+func allocateData(commandType string, data map[string]string){
+	switch commandType {
+	case gocommand.TypeSequence:
+		
+	case gocommand.TypeStartEnd:
+		
+	}
+}
+
+func scheduler(){
+	var TaskData[string]string
+	var TaskType string
+
+}
+
+
 
 
 
