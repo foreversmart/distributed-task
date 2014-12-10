@@ -21,6 +21,8 @@ distributed-task
 > > <P> 4.0 用一致性哈希实现计算过程的缓存和存储<P>
 >  
 
+－ version 0.000000000001
+-
 	
 - 设计思想
 - 
@@ -58,6 +60,8 @@ distributed-task
  ----
  	给njutree dot at gmail dot com 发一封邮件加入我们的项目
  	Please send me a mail at njutree dot whitworth at gmail dot com.
+
+
   
   
 
