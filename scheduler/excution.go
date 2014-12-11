@@ -43,6 +43,7 @@ func manager() {
 	timetotal = 0
 	taskNum = 0
 	performance = 0
+	lock := &sync.Mutex{}
 
 	//分配
 	go func(){
@@ -86,7 +87,7 @@ func manager() {
 	go func(){
 		for{
 			<- executeControlChan
-			go Excute()
+			go Excute(lock)
 		}
 	}
 }
@@ -95,7 +96,7 @@ func AddExcution(method string, dataItem map[string]string, dataType string){
 	executeChan <- &Execution{method, dataItem, dataType}
 }
 
-func doExecute(){
+func doExecute(lock *sync.Mutex){
 
 	t1 := time.Now()
 	UserExecute()
@@ -103,6 +104,7 @@ func doExecute(){
 
 	//动态协程增量执行
 	// change time unit to microsecond
+	lock.Lock()
 	timetotal := timetotal + t2.Sub(t1)/1000
 	taskNum := taskNum + 1
 	oldPerformance := performance
@@ -112,10 +114,10 @@ func doExecute(){
 		executeControlChan <- true
 		executeControlChan <- true
 	}
-
 	if oldPerformance == performance {
 		executeControlChan <- true
 	}
+	lock.Unlock()
 
 }
 

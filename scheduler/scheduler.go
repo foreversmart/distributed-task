@@ -9,14 +9,45 @@ package scheduler
 
 import (
 	"distributed-task/gocommand"
+	"distributed-task/gonet"
 )
 
-func allocateData(commandType string, data map[string]string){
+func allocateData(method string, commandType string, data map[string]string){
 	switch commandType {
 	case gocommand.TypeSequence:
+		//TO-DO performance
 		
+		avg := Math.Ceil(len(data) / len(NodeConfig))
+		for nodeName, config := NodeConfig {
+			tempMap := make(map[string]string)
+			for key,value := data {
+				tempMap[key]=value
+				if len(tempMap)>avg{
+					command := &gocommand.Command{method, commandType, tempMap}
+					commandString := command.GetCommandString()
+					msg := &gonet.Message{value.Config["NodeAddr"], 
+					gocommand.EnCode(commandString)}
+					gonet.Send(msg)
+					break
+				}
+			}
+		}
 	case gocommand.TypeStartEnd:
-		
+		avg := Math.Ceil(len(data) / len(NodeConfig))
+		for nodeName, config := NodeConfig {
+			tempMap := make(map[string]string)
+			for key,value := data {
+				tempMap[key]=value
+				if len(tempMap)>avg{
+					command := &gocommand.Command{method, commandType, tempMap}
+					commandString := command.GetCommandString()
+					msg := &gonet.Message{value.Config["NodeAddr"], 
+					gocommand.EnCode(commandString)}
+					gonet.Send(msg)
+					break
+				}
+			}
+		}
 	}
 }
 
