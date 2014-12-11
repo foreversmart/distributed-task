@@ -23,8 +23,10 @@ func allocateData(commandType string, data map[string]string){
 func scheduler(){
 	var TaskData[string]string
 	var TaskType string
-
 }
+
+
+
 
 
 

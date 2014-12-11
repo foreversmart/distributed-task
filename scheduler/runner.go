@@ -35,7 +35,6 @@ func Runner() {
 		log.Printf("config xml is wrong \n")
 	case:"client"
 		
-
 	case:"server"
 
 	}
