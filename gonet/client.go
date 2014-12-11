@@ -107,16 +107,18 @@ func (goClient *GoClient) clientKeeper(remote string) {
 
 }
 
-func (goClient *GoClient) ClientRead() {
+func (goClient *GoClient) ClientRead(f func(msg string)) {
 	for {
 		tempMsg := <- goClient.receiveChan
 		fmt.Println("client get:", tempMsg.Content)
 		/*
 			user custom function deal message when the client
+
 			receive message
 		*/
-		tempMsg.Content = tempMsg.Content + "2"
-		Send(tempMsg)
+		f(tempMsg)
+		// tempMsg.Content = tempMsg.Content + "2"
+		// Send(tempMsg)
 	}
 }
 

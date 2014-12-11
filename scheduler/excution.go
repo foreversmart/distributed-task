@@ -61,7 +61,7 @@ func manager() {
 				 	if err !=nil {
 				 		log.Printf("manager, execute start end at start type wrong: %v\n", err)
 				 	}
-				 	end,err1 := strconv.ParseInt(execute.dataItem["start"], 10, 64)
+				 	end,err1 := strconv.ParseInt(execute.dataItem["end"], 10, 64)
 				 	if err1 !=nil {
 				 		log.Printf("manager, execute start end at end type wrong: %v\n", err)
 				 	}

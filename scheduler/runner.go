@@ -8,6 +8,8 @@ import(
 	"io/ioutil"
 	"strings"
 	"log"
+	"distributed-task/gonet"
+	"distributed-task/gocommand"
 )
 
 const (
@@ -24,7 +26,7 @@ type Node struct{
 /*
 	load config file & start client or server
 */
-func Runner() {
+func Runner(method string, commandType string, data map[string]string) {
 	LocalConfig = make(map[string]string)
 	NodeConfig = make(map[string]*Node)
 	loadConfig()
@@ -34,9 +36,17 @@ func Runner() {
 	case:""
 		log.Printf("config xml is wrong \n")
 	case:"client"
-		
+		gonet.ClientInit()
+		AllocateData(method, commandType, data)
+		gonet.ClientRead()
 	case:"server"
-
+		go manager()
+		go gonet.ServerRun()
+		gonet.ServerRead(func (msg string){
+			commandStr := gocommand.Decode(msg)
+			command := gocommand.GetCommand(commandStr)
+			AddExcution(command.Method, command.Data, command.Type)
+		})
 	}
 }
 

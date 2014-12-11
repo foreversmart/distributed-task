@@ -34,7 +34,7 @@ func ServerRun() {
 	}
 }
 
-func ServerRead() {
+func ServerRead(f func(msg string)) {
 	for {
 		temp := <-receiveChan
 		fmt.Println("server get:",temp)
@@ -42,6 +42,7 @@ func ServerRead() {
 			user custom function to deal the message when
 			server receive message
 		*/
+		f(temp)
 		// time.Sleep(time.Second * 10)
 		// temp = temp + "1"
 		// ServerSend(temp)
