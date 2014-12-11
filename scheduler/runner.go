@@ -26,7 +26,7 @@ type Node struct{
 /*
 	load config file & start client or server
 */
-func Runner(method string, commandType string, data map[string]string) {
+func Runner(r func()) {
 	LocalConfig = make(map[string]string)
 	NodeConfig = make(map[string]*Node)
 	loadConfig()
@@ -37,7 +37,7 @@ func Runner(method string, commandType string, data map[string]string) {
 		log.Printf("config xml is wrong \n")
 	case:"client"
 		gonet.ClientInit()
-		AllocateData(method, commandType, data)
+		r()
 		gonet.ClientRead()
 	case:"server"
 		go manager()

@@ -1,18 +1,13 @@
 #node type client or server
 #
-ClientType: client
+ClientType: server
 #
 #
 #
 NodeServer
 #------------
-NodeName:1234
-NodeAddr:1111
+NodeName:123
+NodeAddr:127.0.0.1:1256
 NodeInit:11
 NodeCPU:1
 #-----------
-NodeName:1111
-NodeAddr:111
-NodeInit:111111
-NodeCPU:11111
-#**
