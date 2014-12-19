@@ -27,7 +27,7 @@ type Command struct {
 }
 
 /* remove the command split*/
-func Decode (content string) (string) {
+func DeCode (content string) (string) {
 	if IsCommand(content) {
 		return strings.TrimPrefix(strings.TrimSuffix(content, CommandSplit), CommandSplit)
 	}else {
@@ -37,7 +37,7 @@ func Decode (content string) (string) {
 }
 
 /* add the command split*/
-func Encode (content string) string {
+func EnCode (content string) string {
 	return CommandSplit + content + CommandSplit
 }
 

@@ -13,6 +13,6 @@ func TestClient(t *testing.T){
 	var msg = gonet.Message{Host:"127.0.0.1", Port:"1256", Content:"haha"}
 	for {
 		gonet.Send(msg)
-		time.Sleep(time.Second * 5)	
+		time.Sleep(time.Second * 5)
 	}
 }

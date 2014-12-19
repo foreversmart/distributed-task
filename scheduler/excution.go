@@ -6,6 +6,10 @@ package scheduler
 
 import (
 	"strconv"
+	"sync"
+	"log"
+	"time"
+
 
 )
 
@@ -20,14 +24,14 @@ type Execution struct {
 	dataType string
 }
 
-type Unit struct {
+type ExecutionUnit struct {
 	method string
 	key string
 	value string
 }
 
 var executeChan chan *Execution
-var executeUnitChan chan *Unit
+var executeUnitChan chan *ExecutionUnit
 var executeControlChan chan bool
 
 //performance analyze data
@@ -37,10 +41,10 @@ var performance float64
 
 func manager() {
 	//init
-	executeChan = make(chan *Execution, 100)
-	executeUnitChan = make(chan *Unit, 1000)
+	executeChan = make(chan *Execution, 1)
+	executeUnitChan = make(chan *ExecutionUnit, 1000)
 	executeControlChan = make(chan bool, 100000)
-	timetotal = 0
+	timeTotal = 0
 	taskNum = 0
 	performance = 0
 	lock := &sync.Mutex{}
@@ -48,15 +52,15 @@ func manager() {
 	//分配
 	go func(){
 		for{
-			execute <- executeChan
+			execute :=<- executeChan
 			switch execute.dataType {
 			case TypeSequence:
 				for key,value := range execute.dataItem{
-					executeUnitChan <- &executeUnit{execute.method, key, value}
+					executeUnitChan <- &ExecutionUnit{execute.method, key, value}
 				}
-			case TypeStartEnd
-				if execute.dataItem["start"]!=nil &&
-				 execute.dataItem["end"] ! = nil{
+			case TypeStartEnd:
+				if execute.dataItem["start"]!="" &&
+				 execute.dataItem["end"] != ""{
 				 	start,err := strconv.ParseInt(execute.dataItem["start"], 10, 64)
 				 	if err !=nil {
 				 		log.Printf("manager, execute start end at start type wrong: %v\n", err)
@@ -66,7 +70,8 @@ func manager() {
 				 		log.Printf("manager, execute start end at end type wrong: %v\n", err)
 				 	}
 				 	for i := start; i <= end; i++ {
-				 		executeUnitChan <- &executeUnit{execute.method, i, i}
+				 		value := strconv.FormatInt(i, 10)
+				 		executeUnitChan <- &ExecutionUnit{execute.method, value, value}
 				 	}
 
 				}
@@ -87,9 +92,9 @@ func manager() {
 	go func(){
 		for{
 			<- executeControlChan
-			go Excute(lock)
+			go doExecute(lock)
 		}
-	}
+	}()
 }
 
 func AddExcution(method string, dataItem map[string]string, dataType string){
@@ -105,11 +110,11 @@ func doExecute(lock *sync.Mutex){
 	//动态协程增量执行
 	// change time unit to microsecond
 	lock.Lock()
-	timetotal := timetotal + t2.Sub(t1)/1000
+	timeTotal := timeTotal + int64(t2.Sub(t1)/1000)
+	log.Printf("time total: %v \n", timeTotal)
 	taskNum := taskNum + 1
 	oldPerformance := performance
-	performance := (float64)taskNum / (float64)taskNum
-
+	performance := float64(taskNum) / float64(taskNum)
 	if oldPerformance < performance {
 		executeControlChan <- true
 		executeControlChan <- true

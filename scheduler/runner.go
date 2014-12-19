@@ -33,17 +33,22 @@ func Runner(r func()) {
 	log.Printf("loading...success~ %v\n", LocalConfig)
 	log.Printf("loading..remote nodes %v\n", NodeConfig)
 	switch LocalConfig["ClientType"]{
-	case:""
+	case "":
 		log.Printf("config xml is wrong \n")
-	case:"client"
+	case "client":
+		log.Printf("starting client...\n")
 		gonet.ClientInit()
 		r()
-		gonet.ClientRead()
-	case:"server"
+		// gonet.ClientRead(func (msg string){
+		// 	fmt.Printf("client read:", msg)
+		// 	})
+	case "server":
+		log.Printf("starting server...\n")
 		go manager()
 		go gonet.ServerRun()
 		gonet.ServerRead(func (msg string){
-			commandStr := gocommand.Decode(msg)
+			log.Printf("recive msg:%v \n", msg)
+			commandStr := gocommand.DeCode(msg)
 			command := gocommand.GetCommand(commandStr)
 			AddExcution(command.Method, command.Data, command.Type)
 		})
@@ -66,7 +71,7 @@ func loadConfig() {
 	var tempName string
 
 	for _, value := range contentLines {
-		if strings.HasPrefix(value, "#"){
+		if strings.HasPrefix(value, "#") || value ==""{
 			//注释
 		}else{
 			if value == "NodeServer" {

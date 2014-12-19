@@ -8,17 +8,16 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	// "time"
     "distributed-task/scheduler"
 )
 
 
 func main() {
+
 	scheduler.Runner(func(){
-		data := make(map[string]string)
-		data["1"] ＝ "111"
-		data["2"] = "122111"
+		var data  = map[string]string{"1": "111", "2": "122111"}
 		scheduler.AllocateData("", scheduler.TypeSequence, data)
-		})
+	})
 }
