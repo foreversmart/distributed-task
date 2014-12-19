@@ -9,7 +9,7 @@ import (
 	"sync"
 	"log"
 	"time"
-
+	"fmt"
 
 )
 
@@ -41,7 +41,7 @@ var performance float64
 
 func manager() {
 	//init
-	executeChan = make(chan *Execution, 1)
+	executeChan = make(chan *Execution, 0)
 	executeUnitChan = make(chan *ExecutionUnit, 1000)
 	executeControlChan = make(chan bool, 100000)
 	timeTotal = 0
@@ -91,8 +91,11 @@ func manager() {
 	//excute
 	go func(){
 		for{
+			//并发控制
 			<- executeControlChan
-			go doExecute(lock)
+			// 执行单元
+			unit := <- executeUnitChan
+			go doExecute(lock, unit)
 		}
 	}()
 }
@@ -101,16 +104,16 @@ func AddExcution(method string, dataItem map[string]string, dataType string){
 	executeChan <- &Execution{method, dataItem, dataType}
 }
 
-func doExecute(lock *sync.Mutex){
+func doExecute(lock *sync.Mutex, unit *ExecutionUnit){
 
 	t1 := time.Now()
-	UserExecute()
+	UserExecute(unit.key, unit.value)
 	t2 := time.Now()
 
 	//动态协程增量执行
 	// change time unit to microsecond
 	lock.Lock()
-	timeTotal := timeTotal + int64(t2.Sub(t1)/1000)
+	timeTotal = timeTotal + int64(t2.Sub(t1))
 	log.Printf("time total: %v \n", timeTotal)
 	taskNum := taskNum + 1
 	oldPerformance := performance
@@ -130,6 +133,6 @@ func doExecute(lock *sync.Mutex){
 	define user functions
 */
 
-func UserExecute(){
-
+func UserExecute(key, value string){
+	fmt.Println("UserExecute :", key, value)
 }
