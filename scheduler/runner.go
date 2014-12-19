@@ -41,7 +41,7 @@ func Runner(r func()) {
 		r()
 		// gonet.ClientRead(func (msg string){
 		// 	fmt.Printf("client read:", msg)
-		// 	})
+		// })
 	case "server":
 		log.Printf("starting server...\n")
 		go manager()

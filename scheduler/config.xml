@@ -1,6 +1,6 @@
 #node type client or server
 #
-ClientType:server
+ClientType:client
 #
 #
 #
