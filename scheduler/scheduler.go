@@ -91,8 +91,9 @@ func loadNodeChan(){
 }
 
 func sendNode(content string){
-	log.Printf("send msg to node:%s \n", content)
+	
 	node := <- nodeChan
+	log.Printf("send msg to node:%s \n", node.Config["NodeAddr"], content)
 	msg := gonet.Message{node.Config["NodeAddr"], content}
 	gonet.Send(msg)
 	nodeChan <- node
