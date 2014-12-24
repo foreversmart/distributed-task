@@ -37,12 +37,14 @@ func Send(message Message){
 		//bind hand client read
 		var a = func(msg Message){
 			fmt.Println("get msg", msg.Content)
-			}
+		}
 		go ClientMap[remote].ClientRead(a)
 		ClientMap[remote].sendChan <- message.Content
+		fmt.Println("nil")
 	}else{
 		//
 		ClientMap[remote].sendChan <- message.Content
+		fmt.Println("not nil")
 	}
 }
 
@@ -67,7 +69,7 @@ func (goClient *GoClient) clientKeeper(remote string) {
 	// conn.SetKeepAlive(true)
 	checkError(err)
 
-	var msg = make([]byte, 128)
+	var msg = make([]byte, 1024)
 
 	// start send routine 降低读写冲突
 	go func (){
@@ -89,9 +91,9 @@ func (goClient *GoClient) clientKeeper(remote string) {
 	//hear beat
 	go func () {
 		for {
-			fmt.Println("heart")
 			time.Sleep(time.Second * 60)
 			if (goClient !=nil){
+				fmt.Println("heart")
 				goClient.sendChan <- "&**& !heart beat! &**&"
 			}else{
 				return
@@ -105,7 +107,7 @@ func (goClient *GoClient) clientKeeper(remote string) {
 		checkError(err)
 		var tempMsg = Message{remote, string(msg)}
 		goClient.receiveChan <- tempMsg
-		msg = make([]byte, 128)
+		msg = make([]byte, 1024)
 	}
 
 }

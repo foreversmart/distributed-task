@@ -29,7 +29,9 @@ type Command struct {
 /* remove the command split*/
 func DeCode (content string) (string) {
 	if IsCommand(content) {
-		return strings.TrimPrefix(strings.TrimSuffix(content, CommandSplit), CommandSplit)
+		temp := strings.Split(content, CommandSplit)[1]
+		log.Printf("decode string: %s \n", temp)
+		return temp
 	}else {
 		log.Printf("this is not command string: %s\n!", content)
 		return ""
@@ -44,10 +46,14 @@ func EnCode (content string) string {
 /*get the Command struct from the command json string*/
 func GetCommand(content string) *Command {
 	res := &Command{}
-	if err := json.Unmarshal([]byte(content), &res); err != nil {
-        panic(err)
-    }
-    return res
+	if content!="" {
+		if err := json.Unmarshal([]byte(content), &res); err != nil {
+	        panic(err)
+	    }
+	    return res
+	}else{
+		return nil
+	}
 }
 
 /*get the command json string from the command*/
@@ -65,9 +71,23 @@ func (command *Command) GetCommandString() string {
 */
 func IsCommand (content string) bool {
 	if strings.HasPrefix(content, CommandSplit) &&
-	 strings.HasSuffix(content, CommandSplit) {
+	 hasCommandSuffix(content) {
 		return true
 	}else{
 		return false
 	}
+}
+/*
+	because many strings have empty char at tail
+	so this method is the way find valid string len
+*/
+func hasCommandSuffix(command string) bool {
+		lenCommand := len(command)
+		lenSplit := len(CommandSplit)
+		for i := 2 * lenSplit; i < lenCommand; i++ {
+			if command[i: i + lenSplit] == CommandSplit{
+				return true
+			}
+		}
+	return false
 }

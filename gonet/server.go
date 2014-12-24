@@ -9,6 +9,7 @@ import (
 	"net"
 	"time"
 	// "strconv"
+	"distributed-task/gocommand"
 	"os"
 )
 
@@ -36,6 +37,7 @@ func ServerRun() {
 
 func ServerRead(f func(msg string)) {
 	for {
+		fmt.Println("server read")
 		temp := <-receiveChan
 		fmt.Println("server get:",temp)
 		/*
@@ -61,7 +63,7 @@ func ServerSend(content string) {
 */
 func serverKeeper(conn *net.TCPConn) {
 	// conn.SetKeepAlive(true)
-	request := make([]byte, 128) // set maxium request length to 128KB to prevent flood attack
+	request := make([]byte, 1024) // set maxium request length to 128B to prevent flood attack
 	defer func() {
 		sendChan <- "&**& quit this server &**&"//退出协程并且删掉主对象  
 	}()  // close connection before exit
@@ -101,9 +103,15 @@ func serverKeeper(conn *net.TCPConn) {
 		if read_len == 0 {
 			break // connection already closed by client
 		} else {
-			receiveChan <- string(request)
+			fmt.Println("receive", string(request))
+			temp := gocommand.DeCode(string(request))
+			if temp == " !heart beat! " || temp == ""{
+				//heart beat
+			}else{
+				receiveChan <- temp
+			}
 		}
-		request = make([]byte, 128) // clear last read content
+		request = make([]byte, 1024) // clear last read content
 	}
 }
 

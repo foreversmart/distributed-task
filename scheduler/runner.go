@@ -8,6 +8,7 @@ import(
 	"io/ioutil"
 	"strings"
 	"log"
+	"fmt"
 	"distributed-task/gonet"
 	"distributed-task/gocommand"
 )
@@ -39,19 +40,24 @@ func Runner(r func()) {
 		log.Printf("starting client...\n")
 		gonet.ClientInit()
 		r()
+		var input string
+	    fmt.Scanln(&input)
+	    fmt.Println("done")
 		// gonet.ClientRead(func (msg string){
 		// 	fmt.Printf("client read:", msg)
 		// })
 	case "server":
 		log.Printf("starting server...\n")
 		go manager()
-		go gonet.ServerRun()
-		gonet.ServerRead(func (msg string){
+		go gonet.ServerRead(func (msg string){
 			log.Printf("recive msg:%v \n", msg)
-			commandStr := gocommand.DeCode(msg)
-			command := gocommand.GetCommand(commandStr)
+			command := gocommand.GetCommand(msg)
 			AddExcution(command.Method, command.Data, command.Type)
 		})
+
+		gonet.ServerRun()
+		
+
 	}
 }
 
@@ -80,6 +86,11 @@ func loadConfig() {
 				continue
 			}
 			temps:=strings.Split(value, ":")
+			if len(temps) > 2 {
+				for i:=2; i<len(temps); i++{
+					temps[1] = temps[1] + ":" +temps[i]
+				}
+			}
 			if isServerArea {
 				//server config area
 				if(temps[0]=="NodeName"){
