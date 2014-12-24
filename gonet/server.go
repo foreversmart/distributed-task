@@ -19,7 +19,7 @@ var receiveChan chan string
 var sendChan chan string
 
 func ServerRun() {
-	service := ":1256"
+	service := ":1257"
 	receiveChan = make(chan string, 20)
 	sendChan = make(chan string, 20)
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", service)

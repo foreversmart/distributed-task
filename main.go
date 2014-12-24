@@ -8,7 +8,7 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	// "time"
     "distributed-task/scheduler"
 )
@@ -16,8 +16,16 @@ import (
 
 func main() {
 
-	scheduler.Runner(func(){
-		var data  = map[string]string{"1": "111", "2": "122111"}
-		scheduler.AllocateData("", scheduler.TypeSequence, data)
-	})
+	scheduler.Runner(
+		//define data and task
+		func(){
+			var data  = map[string]string{"1": "111", "2": "122111"}
+			scheduler.AllocateData("", scheduler.TypeSequence, data)
+		}, 
+		//define what the task
+		func(key, value string){
+			fmt.Println("key:", key)
+			fmt.Println("value:", value)
+		},
+	)
 }

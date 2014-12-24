@@ -27,7 +27,7 @@ type Node struct{
 /*
 	load config file & start client or server
 */
-func Runner(r func()) {
+func Runner(r func(), userfunc func(key, value string)) {
 	LocalConfig = make(map[string]string)
 	NodeConfig = make(map[string]*Node)
 	loadConfig()
@@ -48,7 +48,7 @@ func Runner(r func()) {
 		// })
 	case "server":
 		log.Printf("starting server...\n")
-		go manager()
+		go manager(userfunc)
 		go gonet.ServerRead(func (msg string){
 			log.Printf("recive msg:%v \n", msg)
 			command := gocommand.GetCommand(msg)
@@ -56,7 +56,6 @@ func Runner(r func()) {
 		})
 
 		gonet.ServerRun()
-		
 
 	}
 }

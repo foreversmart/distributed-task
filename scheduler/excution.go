@@ -39,7 +39,7 @@ var timeTotal int64
 var taskNum int64
 var performance float64
 
-func manager() {
+func manager(userfunc func(key, vlaue string)) {
 	//init
 	executeChan = make(chan *Execution, 0)
 	executeUnitChan = make(chan *ExecutionUnit, 1000)
@@ -95,7 +95,7 @@ func manager() {
 			<- executeControlChan
 			// 执行单元
 			unit := <- executeUnitChan
-			go doExecute(lock, unit)
+			go doExecute(userfunc, lock, unit)
 		}
 	}()
 }
@@ -104,10 +104,11 @@ func AddExcution(method string, dataItem map[string]string, dataType string){
 	executeChan <- &Execution{method, dataItem, dataType}
 }
 
-func doExecute(lock *sync.Mutex, unit *ExecutionUnit){
+func doExecute(userfunc func(key, vlaue string), lock *sync.Mutex, unit *ExecutionUnit){
 
 	t1 := time.Now()
-	UserExecute(unit.key, unit.value)
+	// UserExecute(unit.key, unit.value)
+	userfunc(unit.key, unit.value)
 	t2 := time.Now()
 
 	//动态协程增量执行
