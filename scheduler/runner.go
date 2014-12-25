@@ -26,6 +26,8 @@ type Node struct{
 
 /*
 	load config file & start client or server
+	r define task, userfunc like map (define task itself)
+
 */
 func Runner(r func(), userfunc func(key, value string)) {
 	LocalConfig = make(map[string]string)
@@ -54,7 +56,6 @@ func Runner(r func(), userfunc func(key, value string)) {
 			command := gocommand.GetCommand(msg)
 			AddExcution(command.Method, command.Data, command.Type)
 		})
-
 		gonet.ServerRun()
 
 	}

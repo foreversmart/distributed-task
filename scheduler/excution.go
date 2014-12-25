@@ -108,7 +108,8 @@ func doExecute(userfunc func(key, vlaue string), lock *sync.Mutex, unit *Executi
 
 	t1 := time.Now()
 	// UserExecute(unit.key, unit.value)
-	userfunc(unit.key, unit.value)
+	res := userfunc(unit.key, unit.value)
+	reduceChan <- res
 	t2 := time.Now()
 
 	//动态协程增量执行
