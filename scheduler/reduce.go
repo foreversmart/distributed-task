@@ -9,25 +9,29 @@ package scheduler
 
 import(
 	"distributed-task/gonet"
-	"distributed-task/goncommand"
+	"distributed-task/gocommand"
+	"time"
+	"fmt"
 )
 
 
-var reduceMap string
+var ReduceMap string
 var reduceChan chan string
-var clientReduce
 
-func InitReducer(){
+type UserReduceFunc func(rm, res string) string
+
+func InitReducer(userReduce UserReduceFunc){
 	reduceChan = make(chan string, 100)
-	go reduceResult()
+	go reduceResult(userReduce)
 }
 
-func reduceResult(userReduce func(reduceMap, res string)){
+func reduceResult(userReduce UserReduceFunc){
 	for{
 		select {
 		case res := <- reduceChan:
-			userReduc(userReduce, res)
-		case <- time.After(time.Second * 30):
+			ReduceMap = userReduce(ReduceMap, res)
+			fmt.Println("ReduceMap", ReduceMap)
+		case <- time.After(time.Second * 20):
 			//30 秒没有更新数据reduce data to client
 			reduceToClient()
 		}
@@ -40,9 +44,9 @@ func reduceResult(userReduce func(reduceMap, res string)){
 */
 func reduceToClient(){
 	tempMap := make(map[string]string)
-	tempMap["result"] = reduceMap
-	command := &goncommand.Command{"reduce", "reduce", tempMap}
-	gocommand.EnCode(command.GetCommandString())
-	gonet.ServerSend()
-	reduceMap = ""
+	tempMap["result"] = ReduceMap
+	command := &gocommand.Command{"reduce", "reduce", tempMap}
+	temp := gocommand.EnCode(command.GetCommandString())
+	gonet.ServerSend(temp)
+	ReduceMap = ""
 }

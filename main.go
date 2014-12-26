@@ -18,9 +18,9 @@ func main() {
 
 	//collect in client
 	var collect = func(msg string) {
-		
+		fmt.Println("client collect message:", msg)
 	}
-	
+
 	scheduler.Runner(
 		//define data and task and collect
 		func(){
@@ -28,9 +28,14 @@ func main() {
 			scheduler.AllocateData("", scheduler.TypeSequence, data, collect)
 		}, 
 		//define what the task
-		func(key, value string){
+		func(key, value string) string{
 			fmt.Println("key:", key)
 			fmt.Println("value:", value)
+			return "aaaa"
+		},
+		//server reduce
+		func(rm, res string) string{
+			return rm + res
 		},
 	)
 }

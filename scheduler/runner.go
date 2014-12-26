@@ -26,10 +26,10 @@ type Node struct{
 
 /*
 	load config file & start client or server
-	r define task, userfunc like map (define task itself)
-
+	r define task, userfunc like map (define task itself),
+	serverReduce server data reduce
 */
-func Runner(r func(), userfunc func(key, value string)) {
+func Runner(r func(), userfunc UserExecuteFunc, serverReduce UserReduceFunc) {
 	LocalConfig = make(map[string]string)
 	NodeConfig = make(map[string]*Node)
 	loadConfig()
@@ -51,7 +51,7 @@ func Runner(r func(), userfunc func(key, value string)) {
 	case "server":
 		log.Printf("starting server...\n")
 		//init server reduce
-		InitReducer()
+		InitReducer(serverReduce)
 		go manager(userfunc)
 		go gonet.ServerRead(func (msg string){
 			log.Printf("recive msg:%v \n", msg)

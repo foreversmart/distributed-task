@@ -121,7 +121,7 @@ func (goClient *GoClient) ClientRead(f func(msg string)) {
 
 			receive message
 		*/
-		f(tempMsg)
+		f(tempMsg.Content)
 		// tempMsg.Content = tempMsg.Content + "2"
 		// Send(tempMsg)
 	}

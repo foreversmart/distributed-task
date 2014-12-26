@@ -6,12 +6,6 @@ ClientType:client
 #
 NodeServer
 #------------
-NodeName:123
-NodeAddr:127.0.0.1:1256
-NodeInit:11
-NodeCPU:1
-#-----------
-#------------
 NodeName:1234
 NodeAddr:127.0.0.1:1257
 NodeInit:11
