@@ -27,7 +27,7 @@ func ClientInit() {
 /*
 	send message
 */
-func Send(message Message){
+func Send(message Message, callback func(msg string)){
 
 	remote := message.Addr
 	if ClientMap[remote]==nil {
@@ -35,10 +35,10 @@ func Send(message Message){
 		//client keeper
 		go ClientMap[remote].clientKeeper(remote)
 		//bind hand client read
-		var a = func(msg Message){
-			fmt.Println("get msg", msg.Content)
-		}
-		go ClientMap[remote].ClientRead(a)
+		// var a = func(msg Message){
+		// 	fmt.Println("get msg", msg.Content)
+		// }
+		go ClientMap[remote].ClientRead(callback)
 		ClientMap[remote].sendChan <- message.Content
 		fmt.Println("nil")
 	}else{
@@ -112,7 +112,7 @@ func (goClient *GoClient) clientKeeper(remote string) {
 
 }
 
-func (goClient *GoClient) ClientRead(f func(msg Message)) {
+func (goClient *GoClient) ClientRead(f func(msg string)) {
 	for {
 		tempMsg := <- goClient.receiveChan
 		fmt.Println("client get:", tempMsg.Content)

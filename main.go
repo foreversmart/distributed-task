@@ -16,11 +16,16 @@ import (
 
 func main() {
 
+	//collect in client
+	var collect = func(msg string) {
+		
+	}
+	
 	scheduler.Runner(
-		//define data and task
+		//define data and task and collect
 		func(){
 			var data  = map[string]string{"1": "111", "2": "122111"}
-			scheduler.AllocateData("", scheduler.TypeSequence, data)
+			scheduler.AllocateData("", scheduler.TypeSequence, data, collect)
 		}, 
 		//define what the task
 		func(key, value string){

@@ -44,7 +44,7 @@ func ServerRead(f func(msg string)) {
 			user custom function to deal the message when
 			server receive message
 		*/
-		f(temp)
+		f(temp->Content)
 		// time.Sleep(time.Second * 10)
 		// temp = temp + "1"
 		// ServerSend(temp)

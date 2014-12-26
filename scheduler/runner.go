@@ -50,6 +50,8 @@ func Runner(r func(), userfunc func(key, value string)) {
 		// })
 	case "server":
 		log.Printf("starting server...\n")
+		//init server reduce
+		InitReducer()
 		go manager(userfunc)
 		go gonet.ServerRead(func (msg string){
 			log.Printf("recive msg:%v \n", msg)

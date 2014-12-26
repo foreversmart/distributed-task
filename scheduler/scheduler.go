@@ -18,8 +18,9 @@ var nodeChan chan *Node
 
 /*
 	allocate data task with node performance
+	//define the user collect data
 */
-func AllocateData(method string, commandType string, data map[string]string){
+func AllocateData(method string, commandType string, data map[string]string, userCollect func(msg string)){
 	loadNodeChan()
 	switch commandType {
 	case gocommand.TypeSequence:
@@ -35,7 +36,7 @@ func AllocateData(method string, commandType string, data map[string]string){
 				command := &gocommand.Command{method, commandType, tempMap}
 				commandString := command.GetCommandString()
 				content := gocommand.EnCode(commandString)
-				sendNode(content)
+				sendNode(content, userCollect)
 				// log.Printf("datalength1: %s \n", len(tempMapOther))
 				tempMap = make(map[string]string)
 				// log.Printf("datalength2: %s \n", len(tempMap))
@@ -45,7 +46,7 @@ func AllocateData(method string, commandType string, data map[string]string){
 					command := &gocommand.Command{method, commandType, tempMap}
 					commandString := command.GetCommandString()
 					content := gocommand.EnCode(commandString)
-					sendNode(content)
+					sendNode(content, userCollect)
 				}
 			}
 		}
@@ -74,7 +75,7 @@ func AllocateData(method string, commandType string, data map[string]string){
 			command := &gocommand.Command{method, commandType, tempMap}
 			commandString := command.GetCommandString()
 			content := gocommand.EnCode(commandString)
-			sendNode(content)
+			sendNode(content, userCollect)
 			tempMap = make(map[string]string)
 		}
 	}
@@ -90,12 +91,11 @@ func loadNodeChan(){
 	}
 }
 
-func sendNode(content string){
-	
+func sendNode(content string, userCollect func(msg string)){
 	node := <- nodeChan
 	log.Printf("send msg to node:%s with message: %s\n", node.Config["NodeAddr"], content)
 	msg := gonet.Message{node.Config["NodeAddr"], content}
-	gonet.Send(msg)
+	gonet.Send(msg, userCollect)
 	nodeChan <- node
 }
 

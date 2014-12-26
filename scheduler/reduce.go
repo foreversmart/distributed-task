@@ -2,6 +2,9 @@
 // Use of this source code is governed by The MIT License
 // license that can be found in the LICENSE file.
 
+/*
+	only server use
+*/
 package scheduler
 
 import(
@@ -16,12 +19,18 @@ var clientReduce
 
 func InitReducer(){
 	reduceChan = make(chan string, 100)
+	go reduceResult()
 }
 
-func ReduceResult(userReduce func(reduceMap, res string)){
+func reduceResult(userReduce func(reduceMap, res string)){
 	for{
-		res := <- reduceChan
-		userReduc(userReduce, res)
+		select {
+		case res := <- reduceChan:
+			userReduc(userReduce, res)
+		case <- time.After(time.Second * 30):
+			//30 秒没有更新数据reduce data to client
+			reduceToClient()
+		}
 	}
 }
 
@@ -36,12 +45,4 @@ func reduceToClient(){
 	gocommand.EnCode(command.GetCommandString())
 	gonet.ServerSend()
 	reduceMap = ""
-}
-
-/*
-	call by client
-	to collect all server result
-*/
-func collectReduce(userCollect func(msg string)){
-	
 }
