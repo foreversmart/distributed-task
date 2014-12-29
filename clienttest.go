@@ -15,11 +15,11 @@ import (
 )
 
 
-func main() {
+func mainclient() {
 	fmt.Println("starting client...")
 	gonet.ClientInit()
 	var msg = gonet.Message{Addr:"127.0.0.1:1256", Content:"haha"}
-	gonet.Send(msg)
+	gonet.Send(msg， nil)
 	// time.Sleep(time.Second * 20)	
 	var input string
     for {

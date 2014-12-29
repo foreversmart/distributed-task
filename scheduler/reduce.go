@@ -33,7 +33,9 @@ func reduceResult(userReduce UserReduceFunc){
 			fmt.Println("ReduceMap", ReduceMap)
 		case <- time.After(time.Second * 20):
 			//30 秒没有更新数据reduce data to client
-			reduceToClient()
+			if ReduceMap!= ""{
+				reduceToClient()
+			}
 		}
 	}
 }

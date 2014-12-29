@@ -11,3 +11,9 @@ NodeAddr:127.0.0.1:1257
 NodeInit:11
 NodeCPU:1
 #-----------
+#------------
+NodeName:12345
+NodeAddr:127.0.0.1:1256
+NodeInit:11
+NodeCPU:1
+#-----------

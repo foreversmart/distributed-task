@@ -24,14 +24,14 @@ func main() {
 	scheduler.Runner(
 		//define data and task and collect
 		func(){
-			var data  = map[string]string{"1": "111", "2": "122111"}
+			var data  = map[string]string{"1": "111", "2": "122111", "3": "12gagag"}
 			scheduler.AllocateData("", scheduler.TypeSequence, data, collect)
 		}, 
 		//define what the task
 		func(key, value string) string{
 			fmt.Println("key:", key)
 			fmt.Println("value:", value)
-			return "aaaa"
+			return "aaaa:" + key + value
 		},
 		//server reduce
 		func(rm, res string) string{

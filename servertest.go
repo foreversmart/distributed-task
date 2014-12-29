@@ -15,7 +15,7 @@ import (
 )
 
 
-func main() {
+func mainsever() {
 	fmt.Println("starting client...")
 	go gonet.ServerRun()
 	gonet.ServerRead(func(msg string){
