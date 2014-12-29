@@ -26,7 +26,7 @@ func mainclient() {
 	    fmt.Scanln(&input)
 	    fmt.Println("done")
 	    msg = gonet.Message{Addr:"127.0.0.1:1256", Content: input}
-	    gonet.Send(msg)
+	    gonet.Send(msg, nil)
     }
 }
 
