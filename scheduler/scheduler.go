@@ -20,7 +20,7 @@ var nodeChan chan *Node
 	allocate data task with node performance
 	//define the user collect data
 */
-func AllocateData(method string, commandType string, data map[string]string, userCollect func(msg string)){
+func AllocateData(method string, commandType string, data map[string]string, userCollect func(msg string)) {
 	loadNodeChan()
 	switch commandType {
 	case gocommand.TypeSequence:
@@ -28,11 +28,11 @@ func AllocateData(method string, commandType string, data map[string]string, use
 		count := 0
 		avg := len(data) / len(NodeConfig)
 		tempMap := make(map[string]string)
-		for key,value := range data {
-			tempMap[key]=value
-			count ++
+		for key, value := range data {
+			tempMap[key] = value
+			count++
 			// log.Printf("datalength: %s \n", len(tempMap))
-			if len(tempMap)>=avg{
+			if len(tempMap) >= avg {
 				command := &gocommand.Command{method, commandType, tempMap}
 				commandString := command.GetCommandString()
 				content := gocommand.EnCode(commandString)
@@ -40,8 +40,8 @@ func AllocateData(method string, commandType string, data map[string]string, use
 				// log.Printf("datalength1: %s \n", len(tempMapOther))
 				tempMap = make(map[string]string)
 				// log.Printf("datalength2: %s \n", len(tempMap))
-			}else{
-				if count >= len(data){
+			} else {
+				if count >= len(data) {
 					//at the end
 					command := &gocommand.Command{method, commandType, tempMap}
 					commandString := command.GetCommandString()
@@ -53,21 +53,22 @@ func AllocateData(method string, commandType string, data map[string]string, use
 
 	case gocommand.TypeStartEnd:
 		//TO-DO performance
-		avg := len(data) / len(NodeConfig)
-		start,err := strconv.ParseInt(data["start"], 10, 64)
-		if err !=nil {
+
+		start, err := strconv.ParseInt(data["start"], 10, 64)
+		if err != nil {
 			log.Printf("scheduler, execute start end at start type wrong: %v\n", err)
 		}
-		end,err1 := strconv.ParseInt(data["end"], 10, 64)
-		if err1 !=nil {
+		end, err1 := strconv.ParseInt(data["end"], 10, 64)
+		if err1 != nil {
 			log.Printf("scheduler, execute start end at end type wrong: %v\n", err)
 		}
 
+		avg := (end - start) / int64(len(NodeConfig))
 		tempMap := make(map[string]string)
-		
-		for current := int64(start); current<= end; current= current + int64(avg) {
+
+		for current := int64(start); current <= end; current = current + int64(avg) {
 			tempMap["start"] = strconv.FormatInt(current, 10)
-			tempEnd := current + int64(avg)
+			tempEnd := current + int64(avg) - 1
 			if tempEnd > end {
 				tempEnd = end
 			}
@@ -84,15 +85,15 @@ func AllocateData(method string, commandType string, data map[string]string, use
 /*
 	load the nodeconfig in the nodechan sequence
 */
-func loadNodeChan(){
+func loadNodeChan() {
 	nodeChan = make(chan *Node, len(NodeConfig))
-	for _,config := range NodeConfig{
+	for _, config := range NodeConfig {
 		nodeChan <- config
 	}
 }
 
-func sendNode(content string, userCollect func(msg string)){
-	node := <- nodeChan
+func sendNode(content string, userCollect func(msg string)) {
+	node := <-nodeChan
 	log.Printf("send msg to node:%s with message: %s\n", node.Config["NodeAddr"], content)
 	msg := gonet.Message{node.Config["NodeAddr"], content}
 	gonet.Send(msg, userCollect)
@@ -111,12 +112,3 @@ func sendNode(content string, userCollect func(msg string)){
 // 	//
 // 	allocateData(methodName, taskType, taskData)
 // }
-
-
-
-
-
-
-
-
-
