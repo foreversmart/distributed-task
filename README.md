@@ -4,6 +4,12 @@ distributed-task
 > ` 用go语言编写的轻量级分布式任务调度框架. A light framework of task execution in distributed system Written with go `
 > 
 
+- 安装：
+  go get github.com/foreversmart/distributed-task
+- 更新：
+  go get -u github.com/foreversmart/distributed-task 
+  添加flag u for update
+
 ---
 
 - 项目描述
