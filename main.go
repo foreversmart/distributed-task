@@ -10,12 +10,12 @@ package main
 import (
 	"fmt"
 	// "time"
-    "distributed-task/scheduler"
+	"distributed-task/scheduler"
 )
-
 
 func main() {
 
+	scheduler.LoadConfig("")
 	//collect in client
 	var collect = func(msg string) {
 		fmt.Println("client collect message:", msg)
@@ -23,18 +23,18 @@ func main() {
 
 	scheduler.Runner(
 		//define data and task and collect
-		func(){
-			var data  = map[string]string{"1": "111", "2": "122111", "3": "12gagag"}
+		func() {
+			var data = map[string]string{"1": "111", "2": "122111", "3": "12gagag"}
 			scheduler.AllocateData("", scheduler.TypeSequence, data, collect)
-		}, 
+		},
 		//define what the task
-		func(key, value string) string{
+		func(key, value string) string {
 			fmt.Println("key:", key)
 			fmt.Println("value:", value)
 			return "aaaa:" + key + value
 		},
 		//server reduce
-		func(rm, res string) string{
+		func(rm, res string) string {
 			return rm + res
 		},
 	)

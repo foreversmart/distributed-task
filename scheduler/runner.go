@@ -4,25 +4,25 @@
 
 package scheduler
 
-import(
-	"io/ioutil"
-	"strings"
-	"log"
-	"fmt"
-	"distributed-task/gonet"
+import (
 	"distributed-task/gocommand"
+	"distributed-task/gonet"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"strings"
 )
 
 const (
 	Path string = "/Users/hong/goworkspace/src/distributed-task/scheduler/config.xml"
 )
+
 var LocalConfig map[string]string
 var NodeConfig map[string]*Node
 
-type Node struct{
+type Node struct {
 	Config map[string]string
 }
-
 
 /*
 	load config file & start client or server
@@ -30,12 +30,7 @@ type Node struct{
 	serverReduce server data reduce
 */
 func Runner(r func(), userfunc UserExecuteFunc, serverReduce UserReduceFunc) {
-	LocalConfig = make(map[string]string)
-	NodeConfig = make(map[string]*Node)
-	loadConfig()
-	log.Printf("loading...success~ %v\n", LocalConfig)
-	log.Printf("loading..remote nodes %v\n", NodeConfig)
-	switch LocalConfig["ClientType"]{
+	switch LocalConfig["ClientType"] {
 	case "":
 		log.Printf("config xml is wrong \n")
 	case "client":
@@ -43,8 +38,8 @@ func Runner(r func(), userfunc UserExecuteFunc, serverReduce UserReduceFunc) {
 		gonet.ClientInit()
 		r()
 		var input string
-	    fmt.Scanln(&input)
-	    fmt.Println("done")
+		fmt.Scanln(&input)
+		fmt.Println("done")
 		// gonet.ClientRead(func (msg string){
 		// 	fmt.Printf("client read:", msg)
 		// })
@@ -53,7 +48,7 @@ func Runner(r func(), userfunc UserExecuteFunc, serverReduce UserReduceFunc) {
 		//init server reduce
 		InitReducer(serverReduce)
 		go manager(userfunc)
-		go gonet.ServerRead(func (msg string){
+		go gonet.ServerRead(func(msg string) {
 			log.Printf("recive msg:%v \n", msg)
 			command := gocommand.GetCommand(msg)
 			AddExcution(command.Method, command.Data, command.Type)
@@ -66,8 +61,17 @@ func Runner(r func(), userfunc UserExecuteFunc, serverReduce UserReduceFunc) {
 /*
 	load config
 */
-func loadConfig() {
-	f, err := ioutil.ReadFile(Path)
+func LoadConfig(path string) {
+
+	if path == "" {
+		path = Path
+	}
+
+	LocalConfig = make(map[string]string)
+	NodeConfig = make(map[string]*Node)
+	log.Printf("loading...success~ %v\n", LocalConfig)
+	log.Printf("loading..remote nodes %v\n", NodeConfig)
+	f, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Printf("%s\n", err)
 		panic(err)
@@ -79,30 +83,30 @@ func loadConfig() {
 	var tempName string
 
 	for _, value := range contentLines {
-		if strings.HasPrefix(value, "#") || value ==""{
+		if strings.HasPrefix(value, "#") || value == "" {
 			//注释
-		}else{
+		} else {
 			if value == "NodeServer" {
 				//
 				isServerArea = true
 				continue
 			}
-			temps:=strings.Split(value, ":")
+			temps := strings.Split(value, ":")
 			if len(temps) > 2 {
-				for i:=2; i<len(temps); i++{
-					temps[1] = temps[1] + ":" +temps[i]
+				for i := 2; i < len(temps); i++ {
+					temps[1] = temps[1] + ":" + temps[i]
 				}
 			}
 			if isServerArea {
 				//server config area
-				if(temps[0]=="NodeName"){
+				if temps[0] == "NodeName" {
 					tempName = temps[1]
 					NodeConfig[tempName] = &Node{}
 					NodeConfig[tempName].Config = make(map[string]string)
-				}else{
+				} else {
 					NodeConfig[tempName].Config[temps[0]] = temps[1]
 				}
-			}else{
+			} else {
 				//local config area
 				LocalConfig[temps[0]] = temps[1]
 			}

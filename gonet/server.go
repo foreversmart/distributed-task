@@ -14,12 +14,12 @@ import (
 )
 
 // the server can have one client to work
-// TO-DO 
+// TO-DO
 var receiveChan chan string
 var sendChan chan string
 
 func ServerRun() {
-	service := ":1257"
+	service := ":1256"
 	receiveChan = make(chan string, 20)
 	sendChan = make(chan string, 20)
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", service)
@@ -39,7 +39,7 @@ func ServerRead(f func(msg string)) {
 	for {
 		fmt.Println("server read")
 		temp := <-receiveChan
-		fmt.Println("server get:",temp)
+		fmt.Println("server get:", temp)
 		/*
 			user custom function to deal the message when
 			server receive message
@@ -65,18 +65,18 @@ func serverKeeper(conn *net.TCPConn) {
 	// conn.SetKeepAlive(true)
 	request := make([]byte, 1024) // set maxium request length to 128B to prevent flood attack
 	defer func() {
-		sendChan <- "&**& quit this server &**&"//退出协程并且删掉主对象  
-	}()  // close connection before exit
+		sendChan <- "&**& quit this server &**&" //退出协程并且删掉主对象
+	}() // close connection before exit
 
 	// send
-	go func () {
+	go func() {
 		for {
 			sendData := <-sendChan
-			if sendData != "&**& quit this server &**&"{
+			if sendData != "&**& quit this server &**&" {
 				fmt.Println("server sending...", sendData)
 				_, err := conn.Write([]byte(sendData))
 				checkError(err)
-			}else{
+			} else {
 				//崩溃退出关闭发送协程
 				conn.Close()
 				fmt.Println("quit server Keeper success")
@@ -105,9 +105,9 @@ func serverKeeper(conn *net.TCPConn) {
 		} else {
 			fmt.Println("receive", string(request))
 			temp := gocommand.DeCode(string(request))
-			if temp == " !heart beat! " || temp == ""{
+			if temp == " !heart beat! " || temp == "" {
 				//heart beat
-			}else{
+			} else {
 				receiveChan <- temp
 			}
 		}
@@ -122,4 +122,3 @@ func checkError(err error) {
 		// fmt.Println(err.Error())
 	}
 }
-
