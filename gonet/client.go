@@ -129,7 +129,7 @@ func (goClient *GoClient) ClientRead(f func(msg string)) {
 			tempArr := strings.SplitN(tempbytes.String(), "&**&", 3)
 			f(tempArr[1])
 			tempbytes = bytes.Buffer{}
-			tempbytes.WriteString(tempArr[3])
+			tempbytes.WriteString(tempArr[2])
 		} else {
 
 		}
