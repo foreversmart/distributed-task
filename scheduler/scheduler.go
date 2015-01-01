@@ -66,9 +66,9 @@ func AllocateData(method string, commandType string, data map[string]string, use
 		avg := (end - start) / int64(len(NodeConfig))
 		tempMap := make(map[string]string)
 
-		for current := int64(start); current <= end; current = current + int64(avg) {
+		for current := int64(start); current <= end; current = current + int64(avg) + 1 {
 			tempMap["start"] = strconv.FormatInt(current, 10)
-			tempEnd := current + int64(avg) - 1
+			tempEnd := current + int64(avg)
 			if tempEnd > end {
 				tempEnd = end
 			}
