@@ -5,29 +5,28 @@
 package scheduler
 
 import (
+	"fmt"
+	"log"
 	"strconv"
 	"sync"
-	"log"
 	"time"
-	"fmt"
-
 )
 
 const (
-	TypeSequence string = "sequence"//序列数据
-	TypeStartEnd string = "startend"//起始数据
+	TypeSequence string = "sequence" //序列数据
+	TypeStartEnd string = "startend" //起始数据
 )
 
 type Execution struct {
-	method string
+	method   string
 	dataItem map[string]string
 	dataType string
 }
 
 type ExecutionUnit struct {
 	method string
-	key string
-	value string
+	key    string
+	value  string
 }
 
 //user execution function
@@ -41,6 +40,7 @@ var executeControlChan chan bool
 var timeTotal int64
 var taskNum int64
 var performance float64
+var ExecutionRoutineNum int
 
 func manager(userfunc UserExecuteFunc) {
 	//init
@@ -50,32 +50,33 @@ func manager(userfunc UserExecuteFunc) {
 	timeTotal = 0
 	taskNum = 0
 	performance = 0
+	ExecutionRoutineNum = 0
 	lock := &sync.Mutex{}
 
 	//分配
-	go func(){
-		for{
-			execute :=<- executeChan
+	go func() {
+		for {
+			execute := <-executeChan
 			switch execute.dataType {
 			case TypeSequence:
-				for key,value := range execute.dataItem{
+				for key, value := range execute.dataItem {
 					executeUnitChan <- &ExecutionUnit{execute.method, key, value}
 				}
 			case TypeStartEnd:
-				if execute.dataItem["start"]!="" &&
-				 execute.dataItem["end"] != ""{
-				 	start,err := strconv.ParseInt(execute.dataItem["start"], 10, 64)
-				 	if err !=nil {
-				 		log.Printf("manager, execute start end at start type wrong: %v\n", err)
-				 	}
-				 	end,err1 := strconv.ParseInt(execute.dataItem["end"], 10, 64)
-				 	if err1 !=nil {
-				 		log.Printf("manager, execute start end at end type wrong: %v\n", err)
-				 	}
-				 	for i := start; i <= end; i++ {
-				 		value := strconv.FormatInt(i, 10)
-				 		executeUnitChan <- &ExecutionUnit{execute.method, value, value}
-				 	}
+				if execute.dataItem["start"] != "" &&
+					execute.dataItem["end"] != "" {
+					start, err := strconv.ParseInt(execute.dataItem["start"], 10, 64)
+					if err != nil {
+						log.Printf("manager, execute start end at start type wrong: %v\n", err)
+					}
+					end, err1 := strconv.ParseInt(execute.dataItem["end"], 10, 64)
+					if err1 != nil {
+						log.Printf("manager, execute start end at end type wrong: %v\n", err)
+					}
+					for i := start; i <= end; i++ {
+						value := strconv.FormatInt(i, 10)
+						executeUnitChan <- &ExecutionUnit{execute.method, value, value}
+					}
 
 				}
 			}
@@ -84,7 +85,7 @@ func manager(userfunc UserExecuteFunc) {
 	}()
 
 	//起始并发量
-	func(total int){
+	func(total int) {
 		for i := 0; i < total; i++ {
 			executeControlChan <- true
 		}
@@ -92,22 +93,26 @@ func manager(userfunc UserExecuteFunc) {
 	}(10)
 
 	//excute
-	go func(){
-		for{
+	go func() {
+		for {
 			//并发控制
-			<- executeControlChan
+			<-executeControlChan
 			// 执行单元
-			unit := <- executeUnitChan
+			unit := <-executeUnitChan
 			go doExecute(userfunc, lock, unit)
 		}
 	}()
 }
 
-func AddExcution(method string, dataItem map[string]string, dataType string){
+func AddExcution(method string, dataItem map[string]string, dataType string) {
 	executeChan <- &Execution{method, dataItem, dataType}
 }
 
-func doExecute(userfunc UserExecuteFunc, lock *sync.Mutex, unit *ExecutionUnit){
+func doExecute(userfunc UserExecuteFunc, lock *sync.Mutex, unit *ExecutionUnit) {
+
+	lock.Lock()
+	ExecutionRoutineNum++
+	lock.Unlock()
 
 	t1 := time.Now()
 	// UserExecute(unit.key, unit.value)
@@ -131,6 +136,8 @@ func doExecute(userfunc UserExecuteFunc, lock *sync.Mutex, unit *ExecutionUnit){
 	if oldPerformance == performance {
 		executeControlChan <- true
 	}
+	//退出
+	ExecutionRoutineNum--
 	lock.Unlock()
 
 }
@@ -139,6 +146,6 @@ func doExecute(userfunc UserExecuteFunc, lock *sync.Mutex, unit *ExecutionUnit){
 	define user functions
 */
 
-func UserExecute(key, value string){
+func UserExecute(key, value string) {
 	fmt.Println("UserExecute :", key, value)
 }

@@ -73,7 +73,7 @@ func serverKeeper(conn *net.TCPConn) {
 		for {
 			sendData := <-sendChan
 			if sendData != "&**& quit this server &**&" {
-				fmt.Println("server sending...", sendData)
+				// fmt.Println("server sending...", sendData)
 				_, err := conn.Write([]byte(sendData))
 				checkError(err)
 			} else {

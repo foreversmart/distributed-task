@@ -10,6 +10,7 @@ package scheduler
 import (
 	"distributed-task/gocommand"
 	"distributed-task/gonet"
+	"log"
 	"time"
 )
 
@@ -28,10 +29,14 @@ func reduceResult(userReduce UserReduceFunc) {
 		select {
 		case res := <-reduceChan:
 			ReduceMap = userReduce(ReduceMap, res)
-		case <-time.After(time.Second * 20):
+			log.Printf("routine number:%d \n", ExecutionRoutineNum)
+		case <-time.After(time.Second * 5):
 			//30 秒没有更新数据reduce data to client
-			if ReduceMap != "" {
-				reduceToClient()
+			log.Printf("routine number after:%d \n", ExecutionRoutineNum)
+			if ExecutionRoutineNum == 0 {
+				if ReduceMap != "" {
+					reduceToClient()
+				}
 			}
 		}
 	}
