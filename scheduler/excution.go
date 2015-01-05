@@ -117,7 +117,7 @@ func doExecute(userfunc UserExecuteFunc, lock *sync.Mutex, unit *ExecutionUnit) 
 	t1 := time.Now()
 	// UserExecute(unit.key, unit.value)
 	res := userfunc(unit.key, unit.value)
-	log.Printf("excution result: %s \n", res)
+	// log.Printf("excution result: %s \n", res)
 	reduceChan <- res
 	t2 := time.Now()
 
