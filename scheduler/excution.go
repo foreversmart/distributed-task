@@ -30,7 +30,7 @@ type ExecutionUnit struct {
 }
 
 //user execution function
-type UserExecuteFunc func(key, value string) string
+type UserExecuteFunc func(method, key, value string) string
 
 var executeChan chan *Execution
 var executeUnitChan chan *ExecutionUnit
@@ -116,7 +116,7 @@ func doExecute(userfunc UserExecuteFunc, lock *sync.Mutex, unit *ExecutionUnit) 
 
 	t1 := time.Now()
 	// UserExecute(unit.key, unit.value)
-	res := userfunc(unit.key, unit.value)
+	res := userfunc(unit.method, unit.key, unit.value)
 	// log.Printf("excution result: %s \n", res)
 	reduceChan <- res
 	t2 := time.Now()

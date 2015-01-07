@@ -28,7 +28,7 @@ func main() {
 			scheduler.AllocateData("", scheduler.TypeSequence, data, collect)
 		},
 		//define what the task
-		func(key, value string) string {
+		func(method, key, value string) string {
 			fmt.Println("key:", key)
 			fmt.Println("value:", value)
 			return "aaaa:" + key + value
