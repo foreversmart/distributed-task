@@ -30,7 +30,7 @@ func reduceResult(userReduce UserReduceFunc) {
 		case res := <-reduceChan:
 			ReduceMap = userReduce(ReduceMap, res)
 			log.Printf("routine number:%d \n", ExecutionRoutineNum)
-		case <-time.After(time.Second * 5):
+		case <-time.After(time.Second * 10):
 			//30 秒没有更新数据reduce data to client
 			log.Printf("routine number after:%d \n", ExecutionRoutineNum)
 			if ExecutionRoutineNum == 0 {
