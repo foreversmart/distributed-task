@@ -79,7 +79,13 @@ func AllocateData(method string, commandType string, data map[string]string, use
 			sendNode(content, userCollect)
 			tempMap = make(map[string]string)
 		}
+	case gocommand.TypeCurrentNext:
+		command := &gocommand.Command{method, commandType, data}
+		commandString := command.GetCommandString()
+		content := gocommand.EnCode(commandString)
+		sendNode(content, userCollect)
 	}
+
 }
 
 /*

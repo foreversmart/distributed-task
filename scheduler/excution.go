@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	TypeSequence string = "sequence" //序列数据
-	TypeStartEnd string = "startend" //起始数据
+	TypeSequence    string = "sequence"    //序列数据
+	TypeStartEnd    string = "startend"    //起始数据
+	TypeCurrentNext string = "currentnext" //当前和下一个
 )
 
 type Execution struct {
@@ -79,6 +80,8 @@ func manager(userfunc UserExecuteFunc) {
 					}
 
 				}
+			case TypeCurrentNext:
+				executeUnitChan <- &ExecutionUnit{execute.method, execute.dataItem["current"], execute.dataItem["next"]}
 			}
 
 		}

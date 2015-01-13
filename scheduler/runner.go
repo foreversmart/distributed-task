@@ -51,7 +51,13 @@ func Runner(r func(), userfunc UserExecuteFunc, serverReduce UserReduceFunc) {
 		go gonet.ServerRead(func(msg string) {
 			log.Printf("recive msg:%v \n", msg)
 			command := gocommand.GetCommand(msg)
-			AddExcution(command.Method, command.Data, command.Type)
+			switch command.Method {
+			case "reduce":
+				//客户端发起规约
+				ReduceFlag = true
+			default:
+				AddExcution(command.Method, command.Data, command.Type)
+			}
 		})
 		gonet.ServerRun()
 
