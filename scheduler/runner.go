@@ -36,10 +36,14 @@ func Runner(r func(), userfunc UserExecuteFunc, serverReduce UserReduceFunc) {
 	case "client":
 		log.Printf("starting client...\n")
 		gonet.ClientInit()
-		r()
-		var input string
-		fmt.Scanln(&input)
-		fmt.Println("done")
+		go r()
+		for {
+			var input string
+			if input == "stopclient" {
+				fmt.Scanln(&input)
+				fmt.Println("close client!")
+			}
+		}
 		// gonet.ClientRead(func (msg string){
 		// 	fmt.Printf("client read:", msg)
 		// })

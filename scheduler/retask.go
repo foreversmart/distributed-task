@@ -19,7 +19,7 @@ import (
 */
 func Retask(task string) {
 	tempMap := make(map[string]string)
-	tempMap["task"] = ReduceMap
+	tempMap["task"] = task
 	command := &gocommand.Command{"retask", "retask", tempMap}
 	temp := gocommand.EnCode(command.GetCommandString())
 	gonet.ServerSend(temp)
