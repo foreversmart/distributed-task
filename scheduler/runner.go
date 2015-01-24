@@ -5,16 +5,17 @@
 package scheduler
 
 import (
-	"distributed-task/gocommand"
-	"distributed-task/gonet"
+	"github.com/foreversmart/distributed-task/gocommand"
+	"github.com/foreversmart/distributed-task/gonet"
 	// "fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 )
 
 const (
-	Path string = "/Users/hong/goworkspace/src/distributed-task/scheduler/config.xml"
+	Path string = "config.xml"
 )
 
 var LocalConfig map[string]string
@@ -74,7 +75,8 @@ func Runner(r func(), userfunc UserExecuteFunc, serverReduce UserReduceFunc) {
 func LoadConfig(path string) {
 
 	if path == "" {
-		path = Path
+		file, _ := os.Getwd()
+		path = file + `/scheduler/` + Path
 	}
 
 	LocalConfig = make(map[string]string)

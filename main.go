@@ -10,7 +10,7 @@ package main
 import (
 	"fmt"
 	// "time"
-	"distributed-task/scheduler"
+	"github.com/foreversmart/distributed-task/scheduler"
 )
 
 func main() {

@@ -1,16 +1,16 @@
 package gonet
 
 import (
-	"testing"
 	"fmt"
+	"github.com/foreversmart/distributed-task/gonet"
+	"testing"
 	"time"
-    "distributed-task/gonet"
 )
 
-func TestClient(t *testing.T){
+func TestClient(t *testing.T) {
 	fmt.Println("starting client...")
 	gonet.ClientInit()
-	var msg = gonet.Message{Addr:"127.0.0.1:1256", Content:"haha"}
+	var msg = gonet.Message{Addr: "127.0.0.1:1256", Content: "haha"}
 	fmt.Println("runging")
 	for {
 		fmt.Println("runging")

@@ -9,8 +9,8 @@
 package scheduler
 
 import (
-	"distributed-task/gocommand"
-	"distributed-task/gonet"
+	"github.com/foreversmart/distributed-task/gocommand"
+	"github.com/foreversmart/distributed-task/gonet"
 )
 
 /*

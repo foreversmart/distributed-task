@@ -9,7 +9,7 @@ import (
 	"net"
 	"time"
 	// "strconv"
-	"distributed-task/gocommand"
+	"github.com/foreversmart/distributed-task/gocommand"
 	"os"
 )
 

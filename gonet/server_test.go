@@ -1,13 +1,12 @@
-
 package gonet
 
 import (
-	"testing"
 	"fmt"
-	"distributed-task/gonet"
+	"github.com/foreversmat/distributed-task/gonet"
+	"testing"
 )
 
-func TestServer(t *testing.T){
+func TestServer(t *testing.T) {
 	fmt.Println("starting server...")
 	gonet.ServerRun()
 }
