@@ -10,6 +10,7 @@ package gocommand
 import (
 	"encoding/json"
 	"log"
+	"regexp"
 	"strings"
 )
 
@@ -46,8 +47,17 @@ func EnCode(content string) string {
 /*get the Command struct from the command json string*/
 func GetCommand(content string) *Command {
 	res := &Command{}
+	newContent := make([]rune, 0, 1)
+	tempRunes := []rune(content)
+	reg := regexp.MustCompile("\x00")
+	for _, value := range tempRunes {
+		if reg.MatchString(string(value)) {
+		} else {
+			newContent = append(newContent, value)
+		}
+	}
 	if content != "" {
-		if err := json.Unmarshal([]byte(content), &res); err != nil {
+		if err := json.Unmarshal([]byte(string(newContent)), &res); err != nil {
 			panic(err)
 		}
 		return res
